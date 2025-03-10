@@ -33,7 +33,10 @@ pub struct ResourceTemplate {
     pub uri_template: String,
     /// Name of the resource template
     pub name: String,
-    pub description: String,
+    /// Optional description of the resource template
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
+    #[serde(default = "default_mime_type")]
     pub mime_type: String,
 }
 
@@ -59,13 +62,16 @@ fn default_mime_type() -> String {
 }
 
 impl ResourceTemplate {
-    pub fn new(uri_template: &str, name: &str, description: &str, mime_type: &str) -> Self {
-        Self {
-            uri_template: uri_template.to_string(),
+    pub fn new<S: AsRef<str>>(uri_template: S, name: &str, mime_type: &str) -> Result<Self> {
+        let uri_template = uri_template.as_ref();
+        let url_template = Url::parse(uri_template).map_err(|e| anyhow!("Invalid URI: {}", e))?;
+
+        Ok(Self {
+            uri_template: url_template.to_string(),
             name: name.to_string(),
-            description: description.to_string(),
+            description: None,
             mime_type: mime_type.to_string(),
-        }
+        })
     }
 }
 
