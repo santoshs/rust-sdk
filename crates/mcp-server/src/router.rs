@@ -12,9 +12,9 @@ use mcp_core::{
     prompt::{Prompt, PromptMessage, PromptMessageRole},
     protocol::{
         CallToolResult, GetPromptResult, Implementation, InitializeResult, JsonRpcRequest,
-        JsonRpcResponse, ListPromptsResult, ListResourcesResult, ListToolsResult,
-        PromptsCapability, ReadResourceResult, ResourcesCapability, ServerCapabilities,
-        ToolsCapability,
+        JsonRpcResponse, ListPromptsResult, ListResourceTemplatesResult, ListResourcesResult,
+        ListToolsResult, PromptsCapability, ReadResourceResult, ResourceTemplate,
+        ResourcesCapability, ServerCapabilities, ToolsCapability,
     },
     ResourceContents,
 };
@@ -255,18 +255,14 @@ pub trait Router: Send + Sync + 'static {
     ) -> impl Future<Output = Result<JsonRpcResponse, RouterError>> + Send {
         async move {
             // Default implementation - return a file template
-            let resource_templates = vec![
-                mcp_core::protocol::ResourceTemplate {
-                    uri_template: "file:///{path}".to_string(),
-                    name: "Project Files".to_string(),
-                    description: "Access files in the project directory".to_string(),
-                    mime_type: "application/octet-stream".to_string(),
-                },
-            ];
+            let resource_templates = vec![ResourceTemplate {
+                uri_template: "file:///{path}".to_string(),
+                name: "Project Files".to_string(),
+                description: "Access files in the project directory".to_string(),
+                mime_type: "application/octet-stream".to_string(),
+            }];
 
-            let result = mcp_core::protocol::ListResourceTemplatesResult {
-                resource_templates,
-            };
+            let result = ListResourceTemplatesResult { resource_templates };
 
             let mut response = self.create_response(req.id);
             response.result =
