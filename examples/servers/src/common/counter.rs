@@ -48,8 +48,11 @@ impl CounterRouter {
         uri_template: &str,
         name: &str,
         mime_type: &str,
+        description: &str,
     ) -> ResourceTemplate {
-        ResourceTemplate::new(uri_template, name, mime_type).unwrap()
+        ResourceTemplate::new(uri_template, name, mime_type)
+            .unwrap()
+            .with_description(description)
     }
 }
 
@@ -141,6 +144,7 @@ impl mcp_server::Router for CounterRouter {
             "file:///{path}",
             "Project Files",
             "application/octet-stream",
+            "Access files in the project directory",
         )]
     }
 

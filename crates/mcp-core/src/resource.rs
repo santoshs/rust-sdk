@@ -73,6 +73,11 @@ impl ResourceTemplate {
             mime_type: mime_type.to_string(),
         })
     }
+
+    pub fn with_description<S: Into<String>>(mut self, description: S) -> Self {
+        self.description = Some(description.into());
+        self
+    }
 }
 
 impl Resource {
