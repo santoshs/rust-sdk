@@ -29,7 +29,9 @@ pub struct Resource {
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct ResourceTemplate {
+    /// URI representing the resource template location (e.g., "file:///path/to/file" or "str:///content")
     pub uri_template: String,
+    /// Name of the resource template
     pub name: String,
     pub description: String,
     pub mime_type: String,
@@ -54,6 +56,17 @@ pub enum ResourceContents {
 
 fn default_mime_type() -> String {
     "text".to_string()
+}
+
+impl ResourceTemplate {
+    pub fn new(uri_template: &str, name: &str, description: &str, mime_type: &str) -> Self {
+        Self {
+            uri_template: uri_template.to_string(),
+            name: name.to_string(),
+            description: description.to_string(),
+            mime_type: mime_type.to_string(),
+        }
+    }
 }
 
 impl Resource {
