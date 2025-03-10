@@ -62,10 +62,11 @@ impl CapabilitiesBuilder {
     }
 
     /// Enable resources capability
-    pub fn with_resources(mut self, subscribe: bool, list_changed: bool) -> Self {
+    pub fn with_resources(mut self, subscribe: bool, list_changed: bool, templates: bool) -> Self {
         self.resources = Some(ResourcesCapability {
             subscribe: Some(subscribe),
             list_changed: Some(list_changed),
+            templates: Some(templates),
         });
         self
     }
@@ -248,6 +249,35 @@ pub trait Router: Send + Sync + 'static {
         }
     }
 
+    fn handle_resources_templates_list(
+        &self,
+        req: JsonRpcRequest,
+    ) -> impl Future<Output = Result<JsonRpcResponse, RouterError>> + Send {
+        async move {
+            // Default implementation - return a file template
+            let resource_templates = vec![
+                mcp_core::protocol::ResourceTemplate {
+                    uri_template: "file:///{path}".to_string(),
+                    name: "Project Files".to_string(),
+                    description: "Access files in the project directory".to_string(),
+                    mime_type: "application/octet-stream".to_string(),
+                },
+            ];
+
+            let result = mcp_core::protocol::ListResourceTemplatesResult {
+                resource_templates,
+            };
+
+            let mut response = self.create_response(req.id);
+            response.result =
+                Some(serde_json::to_value(result).map_err(|e| {
+                    RouterError::Internal(format!("JSON serialization error: {}", e))
+                })?);
+
+            Ok(response)
+        }
+    }
+
     fn handle_prompts_list(
         &self,
         req: JsonRpcRequest,
@@ -416,6 +446,7 @@ where
                 "tools/call" => this.handle_tools_call(req).await,
                 "resources/list" => this.handle_resources_list(req).await,
                 "resources/read" => this.handle_resources_read(req).await,
+                "resources/templates/list" => this.handle_resources_templates_list(req).await,
                 "prompts/list" => this.handle_prompts_list(req).await,
                 "prompts/get" => this.handle_prompts_get(req).await,
                 _ => {
