@@ -2,8 +2,8 @@
 use crate::{
     content::Content,
     prompt::{Prompt, PromptMessage},
-    resource::Resource,
     resource::ResourceContents,
+    resource::{Resource, ResourceTemplate},
     tool::Tool,
 };
 use serde::{Deserialize, Serialize};
@@ -205,15 +205,6 @@ pub struct ListResourcesResult {
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct ReadResourceResult {
     pub contents: Vec<ResourceContents>,
-}
-
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
-#[serde(rename_all = "camelCase")]
-pub struct ResourceTemplate {
-    pub uri_template: String,
-    pub name: String,
-    pub description: String,
-    pub mime_type: String,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]

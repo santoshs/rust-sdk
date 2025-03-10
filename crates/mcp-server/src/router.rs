@@ -13,8 +13,8 @@ use mcp_core::{
     protocol::{
         CallToolResult, GetPromptResult, Implementation, InitializeResult, JsonRpcRequest,
         JsonRpcResponse, ListPromptsResult, ListResourceTemplatesResult, ListResourcesResult,
-        ListToolsResult, PromptsCapability, ReadResourceResult, ResourceTemplate,
-        ResourcesCapability, ServerCapabilities, ToolsCapability,
+        ListToolsResult, PromptsCapability, ReadResourceResult, ResourcesCapability,
+        ServerCapabilities, ToolsCapability,
     },
     ResourceContents,
 };
@@ -94,6 +94,7 @@ pub trait Router: Send + Sync + 'static {
         arguments: Value,
     ) -> Pin<Box<dyn Future<Output = Result<Vec<Content>, ToolError>> + Send + 'static>>;
     fn list_resources(&self) -> Vec<mcp_core::resource::Resource>;
+    fn list_resource_templates(&self) -> Vec<mcp_core::resource::ResourceTemplate>;
     fn read_resource(
         &self,
         uri: &str,
@@ -254,13 +255,7 @@ pub trait Router: Send + Sync + 'static {
         req: JsonRpcRequest,
     ) -> impl Future<Output = Result<JsonRpcResponse, RouterError>> + Send {
         async move {
-            // Default implementation - return a file template
-            let resource_templates = vec![ResourceTemplate {
-                uri_template: "file:///{path}".to_string(),
-                name: "Project Files".to_string(),
-                description: "Access files in the project directory".to_string(),
-                mime_type: "application/octet-stream".to_string(),
-            }];
+            let resource_templates = self.list_resource_templates();
 
             let result = ListResourceTemplatesResult { resource_templates };
 

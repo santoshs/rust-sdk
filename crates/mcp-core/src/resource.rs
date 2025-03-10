@@ -27,6 +27,15 @@ pub struct Resource {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[serde(rename_all = "camelCase")]
+pub struct ResourceTemplate {
+    pub uri_template: String,
+    pub name: String,
+    pub description: String,
+    pub mime_type: String,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 #[serde(rename_all = "camelCase", untagged)]
 pub enum ResourceContents {
     TextResourceContents {
