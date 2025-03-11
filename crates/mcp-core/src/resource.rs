@@ -64,10 +64,8 @@ fn default_mime_type() -> String {
 impl ResourceTemplate {
     pub fn new<S: AsRef<str>>(uri_template: S, name: &str) -> Result<Self> {
         let uri_template = uri_template.as_ref();
-        let url_template = Url::parse(uri_template).map_err(|e| anyhow!("Invalid URI: {}", e))?;
-
         Ok(Self {
-            uri_template: url_template.to_string(),
+            uri_template: uri_template.to_string(),
             name: name.to_string(),
             description: None,
             mime_type: None,
