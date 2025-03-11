@@ -50,9 +50,10 @@ impl CounterRouter {
         mime_type: &str,
         description: &str,
     ) -> ResourceTemplate {
-        ResourceTemplate::new(uri_template, name, mime_type)
+        ResourceTemplate::new(uri_template, name)
             .unwrap()
             .with_description(description)
+            .with_mime_type(mime_type)
     }
 }
 
