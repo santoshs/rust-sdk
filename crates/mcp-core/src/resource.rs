@@ -29,13 +29,14 @@ pub struct Resource {
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct ResourceTemplate {
-    /// URI representing the resource template location (e.g., "file:///path/to/file" or "str:///content")
+    /// URI template following RFC 6570
     pub uri_template: String,
-    /// Name of the resource template
+    // Human-readable name for this type
     pub name: String,
-    /// Optional description of the resource template
+    // Optional description
     #[serde(skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
+    // Optional MIME type for all matching resources
     #[serde(default = "default_mime_type")]
     pub mime_type: String,
 }
