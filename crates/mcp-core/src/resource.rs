@@ -293,4 +293,31 @@ mod tests {
         let result = Resource::new("not-a-uri", None, None);
         assert!(result.is_err());
     }
+
+    #[test]
+    fn test_resource_template_new() -> Result<()> {
+        let template = ResourceTemplate::new("file://{path}", "Project Files")?;
+        assert_eq!(template.uri_template, "file://{path}");
+        assert_eq!(template.name, "Project Files");
+        Ok(())
+    }
+
+    #[test]
+    fn test_resource_template_with_description() -> Result<()> {
+        let template = ResourceTemplate::new("file://{path}", "Project Files")?
+            .with_description("Access files in the project directory");
+        assert_eq!(
+            template.description,
+            Some("Access files in the project directory".to_string())
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn test_resource_template_with_mime_type() -> Result<()> {
+        let template =
+            ResourceTemplate::new("file://{path}", "Project Files")?.with_mime_type("text");
+        assert_eq!(template.mime_type, Some("text".to_string()));
+        Ok(())
+    }
 }
